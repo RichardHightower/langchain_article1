@@ -1,0 +1,68 @@
+version: '3'
+
+tasks:
+  default:
+    desc: "Default task - runs all examples"
+    cmds:
+      - task: run
+
+  setup:
+    desc: "Set up the Python environment"
+    cmds:
+      - pyenv install -s 3.12.9
+      - pyenv local 3.12.9
+      - poetry install
+      - poetry config virtualenvs.in-project true
+      - poetry env info --path
+      - chmod +x .venv/bin/activate
+      - source .venv/bin/activate
+      - python --version
+
+  run:
+    desc: "Run the main example"
+    cmds:
+      - poetry run python src/main.py
+
+  run-basic:
+    desc: "Run basic chat examples"
+    cmds:
+      - poetry run python src/basic_chat.py
+
+  run-lcel:
+    desc: "Run LCEL pipeline examples"
+    cmds:
+      - poetry run python src/lcel_pipelines.py
+
+  run-structured:
+    desc: "Run structured output examples"
+    cmds:
+      - poetry run python src/structured_outputs.py
+
+  run-tools:
+    desc: "Run tool usage examples"
+    cmds:
+      - poetry run python src/tool_usage.py
+
+  run-research:
+    desc: "Run research assistant example"
+    cmds:
+      - poetry run python src/research_assistant.py
+
+  test:
+    desc: "Run tests"
+    cmds:
+      - poetry run pytest tests/ -v
+
+  format:
+    desc: "Format code"
+    cmds:
+      - poetry run black src/ tests/
+      - poetry run ruff check --fix src/ tests/
+
+  clean:
+    desc: "Clean up generated files"
+    cmds:
+      - find . -type d -name "__pycache__" -exec rm -rf {} +
+      - find . -type f -name "*.pyc" -delete
+      - rm -rf .pytest_cache
+      - rm -rf .ruff_cache
