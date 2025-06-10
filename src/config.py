@@ -20,8 +20,8 @@ class ModelConfig:
         self.provider = os.getenv("LLM_PROVIDER", "openai").lower()
         self.openai_api_key = os.getenv("OPENAI_API_KEY")
         self.anthropic_api_key = os.getenv("ANTHROPIC_API_KEY")
-        self.openai_model = os.getenv("OPENAI_MODEL", "gpt-4-turbo-preview")
-        self.anthropic_model = os.getenv("ANTHROPIC_MODEL", "claude-3-opus-20240229")
+        self.openai_model = os.getenv("OPENAI_MODEL", "gpt-4.1-2025-04-14")
+        self.anthropic_model = os.getenv("ANTHROPIC_MODEL", "claude-sonnet-4-20250514")
         self.ollama_model = os.getenv("OLLAMA_MODEL", "gemma3:27b")
         self.ollama_base_url = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
 

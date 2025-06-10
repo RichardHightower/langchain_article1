@@ -97,10 +97,17 @@ async def demonstrate_tool_usage(models: Dict[str, BaseChatModel]):
 
     print("=== Tool Availability Check ===\n")
 
-    # Check which models support tools
+    # Check which models support tools - exclude ollama from tool testing
     tool_capable_models = {}
+    excluded_models = []
 
     for name, model in models.items():
+        # Skip ollama models for tool usage since they don't support LangChain function calling
+        if name == "ollama":
+            excluded_models.append(name)
+            print(f"⚠️  {name}: Skipped (LangChain tool binding not supported)")
+            continue
+            
         try:
             model_with_tools = model.bind_tools(tools)
             tool_capable_models[name] = model_with_tools
@@ -110,8 +117,6 @@ async def demonstrate_tool_usage(models: Dict[str, BaseChatModel]):
 
     if not tool_capable_models:
         print("\nNo models with tool support available!")
-        print("Note: Ollama models typically don't support native function calling.")
-        print("Workaround: Use structured prompts to simulate tool usage.\n")
         return
 
     print("\n=== Simple Tool Usage ===\n")
@@ -154,9 +159,36 @@ async def demonstrate_tool_usage(models: Dict[str, BaseChatModel]):
                             )
                         )
 
-                    # Get final response
-                    final_response = await model.ainvoke(messages)
-                    print(f"Final answer: {final_response.content}")
+                    # Get final response - handle multiple tool call rounds
+                    max_iterations = 3
+                    iteration = 0
+                    final_response = None
+                    
+                    while iteration < max_iterations:
+                        final_response = await model.ainvoke(messages)
+                        
+                        # If we get content, we're done
+                        if final_response.content:
+                            print(f"Final answer: {final_response.content}")
+                            break
+                            
+                        # If we get more tool calls, execute them
+                        if hasattr(final_response, "tool_calls") and final_response.tool_calls:
+                            messages.append(final_response)
+                            for tool_call in final_response.tool_calls:
+                                tool_fn = globals()[tool_call["name"]]
+                                result = tool_fn.invoke(tool_call["args"])
+                                messages.append(
+                                    ToolMessage(content=str(result), tool_call_id=tool_call["id"])
+                                )
+                            iteration += 1
+                        else:
+                            # No content and no tool calls - show full response
+                            print(f"Final answer: {str(final_response)}")
+                            break
+                    
+                    if iteration >= max_iterations and final_response:
+                        print(f"Final answer: Reached max iterations, last response: {final_response.content or 'No content'}")
                 else:
                     print(f"Direct response: {response.content[:100]}...")
 
