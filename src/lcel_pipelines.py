@@ -71,7 +71,13 @@ async def demonstrate_lcel_pipelines(models: Dict[str, BaseChatModel]):
 
     def route_by_length(x):
         """Route based on input length"""
-        text = x.get("text", "")
+        # Handle both dict input and formatted prompt input
+        if isinstance(x, dict):
+            text = x.get("text", "")
+        else:
+            # If it's already a formatted prompt, extract text from it
+            text = str(x) if hasattr(x, '__str__') else ""
+        
         if len(text) < 50:
             return list(models.values())[0]  # First available model
         else:
@@ -91,10 +97,12 @@ async def demonstrate_lcel_pipelines(models: Dict[str, BaseChatModel]):
 
     print(routing_prompt)
 
-    routed_chain = {
-        "input": RunnablePassthrough(),
-        "model_output": router | output_parser,
-    }
+    # Create a simpler routing chain that routes first, then formats
+    def create_routed_chain(test_input):
+        selected_model = route_by_length(test_input)
+        return routing_prompt | selected_model | output_parser
+
+    routed_chain = RunnableLambda(create_routed_chain)
 
     # Test with different length inputs
     test_inputs = [
@@ -107,9 +115,10 @@ async def demonstrate_lcel_pipelines(models: Dict[str, BaseChatModel]):
 
     for test_input in test_inputs:
         try:
-            result = await RunnableParallel(routed_chain).ainvoke(test_input)
+            chain = create_routed_chain(test_input)
+            result = await chain.ainvoke(test_input)
             print(f"Input length: {len(test_input['text'])}")
-            print(f"Result: {result['model_output'][:100]}...\n")
+            print(f"Result: {result[:100]}...\n")
         except Exception as e:
             print(f"Routing error: {e}\n")
 
