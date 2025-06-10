@@ -28,7 +28,7 @@ async def demonstrate_basic_chat(models: Dict[str, BaseChatModel]):
     print("\n=== Temperature Comparison ===")
     prompt = "Write a creative haiku about programming"
     
-    for temp in [0.1, 0.7, 1.2]:
+    for temp in [0.1, 0.6, 1.0]:
         print(f"\nTemperature: {temp}")
         
         for name, model in models.items():
@@ -59,3 +59,18 @@ async def demonstrate_basic_chat(models: Dict[str, BaseChatModel]):
             print()  # New line after streaming
         except Exception as e:
             print(f"Streaming not supported or error: {e}")
+
+if __name__ == "__main__":
+    import asyncio
+    from src.config import setup_and_get_models
+    
+    async def main():
+        models = setup_and_get_models()
+        if models:
+            print("\n" + "=" * 60)
+            print("  Basic Chat Interactions")
+            print("=" * 60 + "\n")
+            await demonstrate_basic_chat(models)
+            print("\n✅ Basic chat demonstration complete!")
+    
+    asyncio.run(main())

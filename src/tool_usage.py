@@ -242,3 +242,18 @@ async def demonstrate_tool_usage(models: Dict[str, BaseChatModel]):
                     
             except Exception as e:
                 print(f"Fallback error: {e}")
+
+if __name__ == "__main__":
+    import asyncio
+    from src.config import setup_and_get_models
+    
+    async def main():
+        models = setup_and_get_models()
+        if models:
+            print("\n" + "=" * 60)
+            print("  Tool Usage")
+            print("=" * 60 + "\n")
+            await demonstrate_tool_usage(models)
+            print("\n✅ Tool usage demonstration complete!")
+    
+    asyncio.run(main())

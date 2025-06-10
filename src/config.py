@@ -71,3 +71,18 @@ class ModelConfig:
 
 # Global config instance
 config = ModelConfig()
+
+def setup_and_get_models():
+    """Setup environment and get all available models"""
+    print("LangChain Multi-Model Examples")
+    print("==============================")
+    print(f"Primary provider: {config.provider}")
+    
+    # Get available models
+    models = config.get_all_models()
+    if not models:
+        print("No models available! Please check your configuration.")
+        return None
+        
+    print(f"\nAvailable models: {list(models.keys())}")
+    return models

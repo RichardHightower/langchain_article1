@@ -107,3 +107,18 @@ async def demonstrate_lcel_pipelines(models: Dict[str, BaseChatModel]):
             print(f"Result: {result['model_output'][:100]}...\n")
         except Exception as e:
             print(f"Routing error: {e}\n")
+
+if __name__ == "__main__":
+    import asyncio
+    from src.config import setup_and_get_models
+    
+    async def main():
+        models = setup_and_get_models()
+        if models:
+            print("\n" + "=" * 60)
+            print("  LCEL Pipelines")
+            print("=" * 60 + "\n")
+            await demonstrate_lcel_pipelines(models)
+            print("\n✅ LCEL pipelines demonstration complete!")
+    
+    asyncio.run(main())

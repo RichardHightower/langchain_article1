@@ -143,3 +143,18 @@ async def demonstrate_structured_outputs(models: Dict[str, BaseChatModel]):
             print(f"✗ Failed to extract from: {text[:30]}...")
     
     print(f"\nSuccessfully extracted {len(extracted_people)} people")
+
+if __name__ == "__main__":
+    import asyncio
+    from src.config import setup_and_get_models
+    
+    async def main():
+        models = setup_and_get_models()
+        if models:
+            print("\n" + "=" * 60)
+            print("  Structured Outputs")
+            print("=" * 60 + "\n")
+            await demonstrate_structured_outputs(models)
+            print("\n✅ Structured outputs demonstration complete!")
+    
+    asyncio.run(main())
