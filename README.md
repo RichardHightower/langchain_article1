@@ -31,7 +31,7 @@ Learn how to build production-ready AI applications using LangChain with multipl
 3. Edit `.env` to select your provider and model:
     - For OpenAI: Set `LLM_PROVIDER=openai` and add your API key
     - For Claude: Set `LLM_PROVIDER=anthropic` and add your API key
-    - For Ollama: Set `LLM_PROVIDER=ollama` (install Ollama and pull gemma:7b model first)
+    - For Ollama: Set `LLM_PROVIDER=ollama` (install Ollama and pull gemma3:27b model first)
 4. Run the setup task:
     
     ```bash
@@ -42,20 +42,20 @@ Learn how to build production-ready AI applications using LangChain with multipl
 
 ### OpenAI
 
-- Model: gpt-4-turbo-preview
+- Model: gpt-4.1-2025-04-14
 - Requires: OpenAI API key
 
 ### Anthropic (Claude)
 
-- Model: claude-3-opus-20240229
+- Model: claude-sonnet-4-20250514
 - Requires: Anthropic API key
 
 ### Ollama (Local)
 
 - Model: gemma:7b
-- Requires: Ollama installed and gemma:7b model pulled
+- Requires: Ollama installed and gemma3:27b model pulled
 - Install: `brew install ollama` (macOS) or see [ollama.ai](https://ollama.ai/)
-- Pull model: `ollama pull gemma:7b`
+- Pull model: `ollama pull gemma3:27b`
 
 ## Project Structure
 
@@ -216,7 +216,7 @@ task setup
     
     # For Ollama (local)
     LLM_PROVIDER=ollama
-    OLLAMA_MODEL=gemma:7b
+    OLLAMA_MODEL=gemma3:27b
     # Make sure Ollama is running: ollama serve
     # Pull the model: ollama pull gemma:7b
     ```
